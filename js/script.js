@@ -19,23 +19,30 @@ document.addEventListener("DOMContentLoaded", () => {
   
 
 
+// const triggerOpen = document.querySelectorAll('[trigger-button]');
+// const triggerClose = document.querySelectorAll('[close-button]');
+// const overlay = document.querySelector('[data-overlay]');
 
-// header.scroll
-// const headerScroll = document.querySelector('header.scroll');
-// const headerMain = document.querySelector('header.header-main');
 
-// // ฟังก์ชันสำหรับจัดการสถานะการเลื่อน
-// function toggleHeaderOnScroll() {
-//     if (window.scrollY > 100) { // เลื่อนลงเกิน 100px
-//         headerScroll.classList.add('active'); // เพิ่มคลาส active
-//         headerMain.classList.add('active'); // ซ่อน header-main
+// for (let i = 0; i < triggerOpen.length; i++){
+    
+//     let currentId = triggerOpen[i].dataset.target.split(/[ ,]+/),
+//     targetEL = document.querySelector(`#${currentId}`)
+
+    
+//     const openData = function() {
+//         targetEL.classList.remove('active');
+//         overlay.classList.remove('active');
         
-//     } else {
-//         headerScroll.classList.remove('active'); // ลบคลาส active
-//         headerMain.classList.add('active'); // แสดง header-main
 //     }
+//     triggerOpen[i].addEventListener('click', function() {
+//         targetEL.classList.add('active');
+//         // overlay.classList.add('active');
+//     })
+
+//     targetEL.querySelector('[close-button]').addEventListener('click' , openData);
+//     overlay.addEventListener('click', openData);
 // }
-// window.addEventListener('scroll', toggleHeaderOnScroll);
 
 
 //trigger + close + overlay ,Search
@@ -47,29 +54,22 @@ const triggerOpen = document.querySelectorAll('[trigger-button]');
     let currentId = triggerOpen[i].dataset.target.split(/[ ,]+/);
     let targetEL = document.querySelector(`#${currentId}`);
 
-    // ฟังก์ชันปิด overlay และ target
     const closeOverlay = function () {
       targetEL.classList.remove('active');
       overlay.classList.remove('active');
     };
 
-    // เปิด target และ overlay
     triggerOpen[i].addEventListener('click', function () {
       targetEL.classList.add('active');
-
-      // เช็คเงื่อนไขถ้าไม่มี class "no-overlay" ให้เปิด overlay
       if (!targetEL.classList.contains('no-overlay')) {
         overlay.classList.add('active');
       }
     });
 
-    // ปิดเมื่อกดปุ่ม close-button
     targetEL.querySelector('[close-button]').addEventListener('click', closeOverlay);
-
-    // ปิดเมื่อกดที่ overlay
     overlay.addEventListener('click', closeOverlay);
+    
   }
-
 
 
 

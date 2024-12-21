@@ -17,60 +17,103 @@ document.addEventListener("DOMContentLoaded", () => {
     fadeElements.forEach((el) => observer.observe(el));
   });
   
+//.dotgrid 
+const wrapper = document.querySelector('.dotgrid .wrapper');
+
+if (wrapper) {
+  const items = Array.from(wrapper.children);
+
+  if (items.length < 4) {
+    wrapper.dataset.gridStyle = 'small';
+    items.forEach(item => item.dataset.gridStyle = 'small');
+  } else {
+    wrapper.dataset.gridStyle = 'large';
+    items.forEach(item => item.dataset.gridStyle = 'large');
+  }
+}
 
 
-// const triggerOpen = document.querySelectorAll('[trigger-button]');
-// const triggerClose = document.querySelectorAll('[close-button]');
-// const overlay = document.querySelector('[data-overlay]');
+
+//sorter
+const sorter = document.querySelector('.sort-list');
+if (sorter) {
+  const sortLi = sorter.querySelectorAll('li'); // ใช้ querySelectorAll เพื่อเลือกหลายรายการ
+  sorter.querySelector('.opt-trigger').addEventListener('click', function () {
+    sorter.querySelector('ul').classList.toggle('show');
+  });
+
+  sortLi.forEach((item) => 
+    item.addEventListener('click', function () { // แก้ไข 'fucntion' เป็น 'function'
+      sortLi.forEach((li) => (li !== this ? li.classList.remove('active') : null));
+
+      this.classList.add('active');
+      sorter.querySelector('.opt-trigger span.value').textContent = this.textContent;
+      sorter.querySelector('ul').classList.remove('show'); // ใช้ remove แทน toggle เพื่อปิดเมนู
+    })
+  );
+}
 
 
-// for (let i = 0; i < triggerOpen.length; i++){
-    
-//     let currentId = triggerOpen[i].dataset.target.split(/[ ,]+/),
-//     targetEL = document.querySelector(`#${currentId}`)
-
-    
-//     const openData = function() {
-//         targetEL.classList.remove('active');
-//         overlay.classList.remove('active');
-        
-//     }
-//     triggerOpen[i].addEventListener('click', function() {
-//         targetEL.classList.add('active');
-//         // overlay.classList.add('active');
-//     })
-
-//     targetEL.querySelector('[close-button]').addEventListener('click' , openData);
-//     overlay.addEventListener('click', openData);
-// }
-
-
-//trigger + close + overlay ,Search
+// Trigger + Close + Overlay + Search
 const triggerOpen = document.querySelectorAll('[trigger-button]');
-  const triggerClose = document.querySelectorAll('[close-button]');
-  const overlay = document.querySelector('[data-overlay]');
+const triggerClose = document.querySelectorAll('[close-button]');
+const overlay = document.querySelector('[data-overlay]');
 
-  for (let i = 0; i < triggerOpen.length; i++) {
-    let currentId = triggerOpen[i].dataset.target.split(/[ ,]+/);
-    let targetEL = document.querySelector(`#${currentId}`);
+for (let i = 0; i < triggerOpen.length; i++) {
+  // แยก ID ใน data-target ออกเป็น Array
+  let currentIds = triggerOpen[i].dataset.target.split(/[ ,]+/);
+  
+  // สร้างฟังก์ชันเพื่อปิด overlay และลบ active จากทุก ID
+  const closeOverlay = function () {
+    currentIds.forEach(id => {
+      const targetEL = document.querySelector(`#${id}`);
+      if (targetEL) {
+        targetEL.classList.remove('active');
+      }
+    });
+    overlay.classList.remove('active');
+  };
 
-    const closeOverlay = function () {
-      targetEL.classList.remove('active');
-      overlay.classList.remove('active');
-    };
-
-    triggerOpen[i].addEventListener('click', function () {
-      targetEL.classList.add('active');
-      if (!targetEL.classList.contains('no-overlay')) {
-        overlay.classList.add('active');
+  // เมื่อคลิกปุ่ม trigger
+  triggerOpen[i].addEventListener('click', function () {
+    currentIds.forEach(id => {
+      const targetEL = document.querySelector(`#${id}`);
+      if (targetEL) {
+        targetEL.classList.add('active');
+        // หากมีคลาส notification จะลบ active หลัง 1.5 วินาที
+        if (targetEL.classList.contains('notification')) {
+          setTimeout(() => {
+            targetEL.classList.remove('active');
+          }, 1500); 
+        }
       }
     });
 
-    targetEL.querySelector('[close-button]').addEventListener('click', closeOverlay);
-    overlay.addEventListener('click', closeOverlay);
-    
-  }
+    // หากไม่มีคลาส no-overlay ให้เพิ่ม active ให้ overlay
+    if (!Array.from(currentIds).some(id => {
+      const targetEL = document.querySelector(`#${id}`);
+      return targetEL && targetEL.classList.contains('no-overlay');
+    })) {
+      overlay.classList.add('active');
+    }
+  });
 
+  // เพิ่ม event listener ให้ close button และ overlay
+  currentIds.forEach(id => {
+    const targetEL = document.querySelector(`#${id}`);
+    if (targetEL) {
+      const closeButton = targetEL.querySelector('[close-button]');
+      if (closeButton) {
+        closeButton.addEventListener('click', closeOverlay);
+      }
+    }
+  });
+  overlay.addEventListener('click', closeOverlay);
+}
+
+
+
+  
 
 
 //mobile-menu submenu
